@@ -1,26 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: migration
-  labels:
-    app.kubernetes.io/name: rest-web
-    app.kubernetes.io/instance: rest-web-db
-    app.kubernetes.io/version: 1.0.0
-    app.kubernetes.io/component: database
-    app.kubernetes.io/part-of: dev
-    app.kubernetes.io/managed-by: manual
+  name: setup
 spec:
   template:
     metadata:
-      name: migration
+      name: setup
     spec:
       containers:
-      - name: migration
+      - name: setup
         image: takapon564/rest-web
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "./bin/rails db:create && ./bin/rails db:migrate"]
+        args: ["-c", "bundle exec rake db:create && bundle exec rake db:migrate"]
         envFrom:
         - configMapRef:
-            name: app-config
+            name: rails-config
       restartPolicy: Never
