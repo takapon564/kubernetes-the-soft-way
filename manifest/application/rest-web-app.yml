@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: rails
+  name: service-for-application
 spec:
   selector:
-    app: rails
+    app: rails-app
   type: ClusterIP
   ports:
-    - name: app-port
+    - name: port
       protocol: TCP
       port: 80
       targetPort: 3000
@@ -15,18 +15,18 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rails
+  name: deployment-for-application
 spec:
   selector:
     matchLabels:
-      app: rails
+      app: rails-app
   template:
     metadata:
       labels:
-        app: rails
+        app: rails-app
     spec:
       containers:
-      - name: rails
+      - name: rails-app
         image: takapon564/rest-web
         imagePullPolicy: Always
         command: ["bundle", "exec", "rails", "s"]

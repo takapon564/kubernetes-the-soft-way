@@ -15,7 +15,7 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: rails
+              serviceName: service-for-application
               servicePort: 80
   tls:
     - hosts:
