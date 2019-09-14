@@ -28,7 +28,7 @@ spec:
         app.kubernetes.io/managed-by: manual
     spec:
       containers:
-        - name: server
+        - name: nginx
           image: nginx:1.14.2
           ports:
             - name: http
