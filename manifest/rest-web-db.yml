@@ -1,81 +1,47 @@
----
-kind: Service
 apiVersion: v1
-metadata:
-  name: rest-web-db-svc
-  labels:
-    app.kubernetes.io/name: rest-web
-    app.kubernetes.io/instance: rest-web-db
-    app.kubernetes.io/version: 1.0.0
-    app.kubernetes.io/component: database
-    app.kubernetes.io/part-of: dev
-    app.kubernetes.io/managed-by: manual
-spec:
-  clusterIP: None
-  selector:
-    app.kubernetes.io/instance: rest-web-db
-    app.kubernetes.io/component: database
-  ports:
-    - name: mysql-port
-      protocol: TCP
-      port: 3306
-
----
-kind: StatefulSet
-apiVersion: apps/v1
+kind: Service
 metadata:
   name: db
-  labels:
-    app.kubernetes.io/name: rest-web
-    app.kubernetes.io/instance: rest-web-db
-    app.kubernetes.io/version: 1.0.0
-    app.kubernetes.io/component: database
-    app.kubernetes.io/part-of: dev
-    app.kubernetes.io/managed-by: manual
 spec:
-  serviceName: rest-web-db-svc
-  replicas: 1
+  selector:
+    app: db
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: rest-web-db
-      app.kubernetes.io/component: database
+      app: db
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: rest-web
-        app.kubernetes.io/instance: rest-web-db
-        app.kubernetes.io/version: 1.0.0
-        app.kubernetes.io/component: database
-        app.kubernetes.io/part-of: dev
-        app.kubernetes.io/managed-by: manual
+        app: db
     spec:
       containers:
-        - name: db
-          image: mysql:5.6 # 5.x latest is 5.7.24
-          env:
-            - name: MYSQL_USER
-              value: root
-            - name: MYSQL_ROOT_PASSWORD
-              value: password
-            
-          ports:
-            - containerPort: 3306
-          volumeMounts:
-            - name: rest-web-db-pvc
-              mountPath: /var/lib/mysql
-  volumeClaimTemplates:
-    - metadata:
-        name: rest-web-db-pvc
-        labels:
-          app.kubernetes.io/name: rest-web
-          app.kubernetes.io/instance: rest-web-db
-          app.kubernetes.io/version: 1.0.0
-          app.kubernetes.io/component: database
-          app.kubernetes.io/part-of: dev
-          app.kubernetes.io/managed-by: manual
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 500M
+      - name: db
+        image: mysql:5.7
+        env:
+        - name: MYSQL_USER
+          value: 'root'
+        - name: MYSQL_ROOT_PASSWORD
+          value: 'password'
+        - name: MYSQL_PASSWORD
+          value: 'password'
+        ports:
+        - containerPort: 3306
+          name: db
+        volumeMounts:
+        - name: mysql-pv
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-pv
+        persistentVolumeClaim:
+          claimName: mysql-pvc
