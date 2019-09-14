@@ -1,5 +1,6 @@
-# rest-web  
-## required  
+# Kubernetes from zero  to Hero  
+このリポジトリはKubernetesの初心者や経験の少ない人がレベルアップするためのハンズオン資料です。
+## 実行環境  
 - docker >= 18.09  
 - docker-compose >= 1.23.2  
 

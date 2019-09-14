@@ -1,0 +1,77 @@
+# apiVersion: networking.k8s.io/v1beta1
+# kind: Ingress
+# metadata:
+#   name: sample-site-ing
+#   # labels:
+#   #   app.kubernetes.io/name: ingress-sample
+#   #   app.kubernetes.io/instance: ingress-sample-1
+#   #   app.kubernetes.io/version: 1.0.0
+#   #   app.kubernetes.io/component: proxy
+#   #   app.kubernetes.io/part-of: dev
+#   #   app.kubernetes.io/managed-by: manual
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+# spec:
+#   # default backend
+#   backend:
+#     serviceName: rest-web-server-svc
+#     servicePort: 80
+#   rules:
+#     # for redmine
+#     - host: localhost
+#       http:
+#         paths:
+#           - path: /
+#             backend:
+#               serviceName: rest-web-app-svc
+#               servicePort: 80
+#   tls:
+#     - hosts:
+#         - localhost
+
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: rails-ing
+# spec:
+#   rules:
+#   - host: localhost
+#     http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: rails
+#           servicePort: 3000
+
+
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: sample-site-ing
+  # labels:
+  #   app.kubernetes.io/name: ingress-sample
+  #   app.kubernetes.io/instance: ingress-sample-1
+  #   app.kubernetes.io/version: 1.0.0
+  #   app.kubernetes.io/component: proxy
+  #   app.kubernetes.io/part-of: introduction-to-kubernetes
+  #   app.kubernetes.io/managed-by: manual
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  # default backend
+  backend:
+    serviceName: rest-web-server-svc
+    servicePort: 80
+  rules:
+    # for redmine
+    - host: localhost
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: rails
+              servicePort: 80
+  tls:
+    - hosts:
+        - localhost
