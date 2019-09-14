@@ -1,14 +1,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: setup
+  name: migration-job
 spec:
   template:
     metadata:
-      name: setup
+      name: migration-job
     spec:
       containers:
-      - name: setup
+      - name: migration-job
         image: takapon564/rest-web
         imagePullPolicy: Always
         command: ["/bin/sh"]
