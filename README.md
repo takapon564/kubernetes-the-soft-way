@@ -3,11 +3,14 @@
 
 ## 目次  
 - 実行環境  
+- Kubernetesの概要
 - Kubernetesクラスターにアプリケーションをデプロイする  
 - 各コンポーネントの説明
 ## 実行環境  
 - docker desktop  2.1.0.2
-- kubectl  1.14.6
+- kubectl  1.14.6  
+
+## Kubernetesの概要  
 
 ## Kubernetesクラスターにアプリケーションをデプロイする   
 
