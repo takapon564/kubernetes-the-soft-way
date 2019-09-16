@@ -43,22 +43,22 @@ $ git clone https://github.com/takapon564/KubernetesFromZeroToHero.git
 
 $ cd KubernetesFromZeroToHero  
 
-# データベースのデプロイ
+# データベースのデプロイ(Persistence Volume,Deployment, Service)
 $ kubectl apply -f manifest/database/
 
-# 環境変数のConfigMapを展開
+# 環境変数のConfigMapを展開(configMap)
 kubectl apply -f manifest/configuration/
 
-# データベースのマイグレーション
+# データベースのマイグレーション(Job)
 $ kubectl apply -f manifest/migrate/
 
-# アプリケーションのdeploy
+# アプリケーションのdeploy(Deployment, Service)
 $ kubectl apply -f manifest/application/
 
-# ingressコントローラーの有効化
+# ingressコントローラーの有効化(Service, Deployment, Ingress)
 $ matsuuratakahito$ ./ingress-controller-setup.sh
 
-# アプリケーションを外部に公開するためのservice設定
+# アプリケーションを外部に公開するためのservice設定(Service, Ingress, Deployment)
 $ kubectl apply -f manifest/service/
 ```  
 
@@ -72,18 +72,30 @@ $ kubectl apply -f manifest/service/
 データベースはDeploymentとして定義されています。`rest-web-db.yml`の44行目で事前に作成したボリュームを使用するよう宣言しています。また、他のPodと通信できるようにClusterIP型のServiceを定義してます。**ClusterIPは外部に公開されることはなく、他のPodと通信するため**に利用されます。
 
 ### ConfigMap  
+コンテナアプリケーションは環境変数をコンテナないに埋め込むことができます。しかし、環境が変わると環境毎に環境変数を変更しイメージを再作成しなければいけません。複数のアプリケーションで参照する環境変数を共有する仕組みが`ConfigMap`です。`manifest/configuration/app-config.yml`にはDBのパスワードやユーザー名が記述されており、複数のPodからこれを参照することができます。`rest-web-app.yml`の33行目の`envFrom`で｀`manifest/configuration/app-config.yml`で作成した環境変数を参照しています。
 
 
 ### Job  
 一般的にPodは起動したら、以上がない限り稼働し続けますがDBのマイグレーションなどのバッチ的な処理を走らせたい場合があるかもしれません。そのような時に使うのがJob/CronJobです。`manifest/migrate/migration.yml`はデプロイされたDBにマイグレーションを行なっています。この処理はPodとして行われ正常に実行されると、`completed`の状態になります。`migration.yml`を適用した後に`kubectl get po`を実行してみてください。Jobが正常に動作していれば、次のようになっているはずです。  
-![]()  
+![](./images/logs.jpg)  
 
-念のために`kubectl get logs <JobのPod名>`を実行してコンテナの実行ログを出力してみましょう。  
+念のために`kubectl logs <JobのPod名>`を実行してコンテナの実行ログを出力してみましょう。  
 
 ```
+Created database 'app_development'
+Created database 'app_test'
+== 20181108203446 CreateBoards: migrating =====================================
+・
+・
+<省略>
+・
+・
+== 20190803014636 AddBirthdayToUser: migrating ================================
+-- add_column(:users, :birthday, :date)
+   -> 0.1436s
+== 20190803014636 AddBirthdayToUser: migrated (0.1437s) =======================
 
-
-
+Model files unchanged.
 ```
 
 
@@ -110,8 +122,7 @@ spec:
   externalName: example.com
 ```
 #### Ingress 
-これまで説明してきた各ServiceはL3,L4での通信を行なうものでしたが、**Ingress**はL7(http/https)での通信を行います。
-
+これまで説明してきた各ServiceはL3,L4での通信を行なうものでしたが、**Ingress**はL7(http/https)での通信を行います。IngressIngressは環境によってことなりますが、ここではKubernetesが標準でサポートしているnginx ingress controllerを利用しています。
 
 ## リソースのクリーンアップ  
 
