@@ -22,7 +22,7 @@
 - kubectlコマンドの詳細な説明
 
 ## 実行環境  
-- docker desktop![](https://www.docker.com)  2.1.0.2
+- [docker desktop](https://www.docker.com)  2.1.0.2
 - kubectl  1.14.6  
 
 ## Kubernetesの概要  
